@@ -10,12 +10,12 @@ export const TenantAdminDashboard: React.FC = () => {
   const [singleName, setSingleName] = useState('');
   const [singleEmail, setSingleEmail] = useState('');
 
-  // モックデータ：本来はAPIから自社のアナリティクスを取得
+  // テスト環境用：初期状態として0をセット
   const analytics = {
-    totalEmployees: 120,
-    averageCompletionRate: 68, // %
-    averageQuizScore: 85, // 点
-    notStartedUsers: 15, // 人
+    totalEmployees: 0,
+    averageCompletionRate: 0, // %
+    averageQuizScore: 0, // 点
+    notStartedUsers: 0, // 人
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

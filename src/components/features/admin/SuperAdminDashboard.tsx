@@ -37,25 +37,8 @@ export const SuperAdminDashboard: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="text-sm">
-                  <tr className="border-b hover:bg-gray-50">
-                    <td className="p-3 text-gray-500">TR-001</td>
-                    <td className="p-3 font-bold">情報セキュリティ基礎研修</td>
-                    <td className="p-3">セキュリティ</td>
-                    <td className="p-3">5問</td>
-                    <td className="p-3">
-                      <button className="text-blue-600 hover:underline mr-2">編集</button>
-                      <button className="text-red-600 hover:underline">削除</button>
-                    </td>
-                  </tr>
-                  <tr className="border-b hover:bg-gray-50">
-                    <td className="p-3 text-gray-500">TR-002</td>
-                    <td className="p-3 font-bold">コンプライアンス研修 2026</td>
-                    <td className="p-3">コンプライアンス</td>
-                    <td className="p-3">10問</td>
-                    <td className="p-3">
-                      <button className="text-blue-600 hover:underline mr-2">編集</button>
-                      <button className="text-red-600 hover:underline">削除</button>
-                    </td>
+                  <tr>
+                    <td colSpan={5} className="p-8 text-center text-gray-500">現在登録されている研修動画はありません。</td>
                   </tr>
                 </tbody>
               </table>
@@ -67,15 +50,15 @@ export const SuperAdminDashboard: React.FC = () => {
             <div className="grid grid-cols-3 gap-4 text-center">
               <div className="p-4 bg-gray-50 rounded">
                 <p className="text-xs text-gray-500 font-bold">総契約テナント数</p>
-                <p className="text-2xl font-black text-gray-800">45 <span className="text-xs font-normal">社</span></p>
+                <p className="text-2xl font-black text-gray-800">0 <span className="text-xs font-normal">社</span></p>
               </div>
               <div className="p-4 bg-gray-50 rounded">
                 <p className="text-xs text-gray-500 font-bold">総アクティブユーザー</p>
-                <p className="text-2xl font-black text-gray-800">12,450 <span className="text-xs font-normal">人</span></p>
+                <p className="text-2xl font-black text-gray-800">0 <span className="text-xs font-normal">人</span></p>
               </div>
               <div className="p-4 bg-gray-50 rounded">
                 <p className="text-xs text-gray-500 font-bold">今月の完了数</p>
-                <p className="text-2xl font-black text-gray-800">8,203 <span className="text-xs font-normal">件</span></p>
+                <p className="text-2xl font-black text-gray-800">0 <span className="text-xs font-normal">件</span></p>
               </div>
             </div>
           </div>
@@ -90,22 +73,8 @@ export const SuperAdminDashboard: React.FC = () => {
             </div>
             
             <div className="space-y-4">
-              <div className="border border-gray-200 rounded p-4 hover:border-green-300 transition-colors cursor-pointer">
-                <div className="flex justify-between items-center mb-2">
-                  <h4 className="font-bold text-gray-800">株式会社A</h4>
-                  <span className="text-xs font-bold px-2 py-1 bg-green-100 text-green-800 rounded">アクティブ</span>
-                </div>
-                <p className="text-xs text-gray-600 mb-1">契約プラン: スタンダード</p>
-                <p className="text-xs text-gray-600">ライセンス割当: TR-001, TR-002</p>
-              </div>
-
-              <div className="border border-gray-200 rounded p-4 hover:border-green-300 transition-colors cursor-pointer">
-                <div className="flex justify-between items-center mb-2">
-                  <h4 className="font-bold text-gray-800">B商事株式会社</h4>
-                  <span className="text-xs font-bold px-2 py-1 bg-green-100 text-green-800 rounded">アクティブ</span>
-                </div>
-                <p className="text-xs text-gray-600 mb-1">契約プラン: プレミアム</p>
-                <p className="text-xs text-gray-600">ライセンス割当: 全ての研修</p>
+              <div className="border border-gray-200 rounded p-8 text-center">
+                <p className="text-gray-500 text-sm">現在契約中の顧客企業はありません。</p>
               </div>
             </div>
           </div>
