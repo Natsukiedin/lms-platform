@@ -10,19 +10,15 @@ const App: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleFormLogin = (e: React.FormEvent) => {
+  const handleFormLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) return;
     
-    // テスト用：任意のメールアドレスで「一般受講者」としてログインする
-    login('dummy-token-1', { 
-      id: 'u1', 
-      name: '受講者', 
-      email: email, 
-      role: 'USER', 
-      tenantId: 't1', 
-      companyName: '株式会社A' 
-    });
+    try {
+      await login(email, password);
+    } catch (err) {
+      alert('ログインに失敗しました。メールアドレスかパスワードが間違っています。');
+    }
   };
 
   if (isLoading) {
@@ -90,37 +86,6 @@ const App: React.FC = () => {
                       ログイン
                     </button>
                   </form>
-
-                  <div className="relative mb-6">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-white text-gray-500 font-bold">【テスト環境用】ワンクリックログイン</span>
-                    </div>
-                  </div>
-
-                  {/* テスト用ボタン */}
-                  <div className="space-y-3">
-                    <button 
-                      onClick={() => login('dummy-token-1', { id: 'u1', name: '一般社員', email: 'user@example.com', role: 'USER', tenantId: 't1', companyName: '株式会社A' })}
-                      className="w-full bg-gray-100 text-gray-700 p-2 rounded text-sm font-bold hover:bg-gray-200"
-                    >
-                      一般受講者としてログイン
-                    </button>
-                    <button 
-                      onClick={() => login('dummy-token-2', { id: 'a1', name: '人事管理者', email: 'admin@example.com', role: 'TENANT_ADMIN', tenantId: 't1', companyName: '株式会社A' })}
-                      className="w-full bg-gray-100 text-gray-700 p-2 rounded text-sm font-bold hover:bg-gray-200"
-                    >
-                      顧客企業管理者としてログイン
-                    </button>
-                    <button 
-                      onClick={() => login('dummy-token-3', { id: 'sa1', name: 'プラットフォーム運営者', email: 'super@example.com', role: 'SUPER_ADMIN', tenantId: null, companyName: '株式会社NAGAHAMA屋' })}
-                      className="w-full bg-gray-100 text-gray-700 p-2 rounded text-sm font-bold hover:bg-gray-200"
-                    >
-                      運営管理者としてログイン
-                    </button>
-                  </div>
                 </div>
               ) : (
                 <Navigate to="/" replace />
