@@ -3,6 +3,7 @@ import { useState } from 'react';
 interface ParsedUser {
   name: string;
   email: string;
+  password?: string;
 }
 
 export const useCsvParser = () => {
@@ -50,6 +51,7 @@ export const useCsvParser = () => {
         return {
           name: columns[0].trim().replace(/^"|"$/g, ''),
           email: columns[1].trim().replace(/^"|"$/g, ''),
+          password: columns.length >= 3 ? columns[2].trim().replace(/^"|"$/g, '') : undefined,
         };
       });
 

@@ -9,6 +9,7 @@ export const TenantAdminDashboard: React.FC = () => {
 
   const [singleName, setSingleName] = useState('');
   const [singleEmail, setSingleEmail] = useState('');
+  const [singlePassword, setSinglePassword] = useState('');
 
   // テスト環境用：初期状態として0をセット
   const analytics = {
@@ -37,12 +38,13 @@ export const TenantAdminDashboard: React.FC = () => {
 
   const handleSingleRegister = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!singleName || !singleEmail) return;
+    if (!singleName || !singleEmail || !singlePassword) return;
     
     // APIへデータを送信し登録する処理
-    alert(`${singleName} さんを登録しました！（招待メールは送信されません）`);
+    alert(`${singleName} さんを登録しました！（初期パスワード: ${singlePassword}）`);
     setSingleName('');
     setSingleEmail('');
+    setSinglePassword('');
   };
 
   const handleExportCsv = () => {
@@ -89,7 +91,9 @@ export const TenantAdminDashboard: React.FC = () => {
         {/* CSVインポート */}
         <div className="bg-white p-6 rounded-lg shadow">
           <h3 className="text-xl font-bold mb-4 border-b pb-2">受講者一括登録 (CSV)</h3>
-          <p className="text-sm text-gray-600 mb-4">「氏名」「メールアドレス」の2列からなるCSVファイルをアップロードしてください。</p>
+          <p className="text-sm text-gray-600 mb-4">
+            「氏名」「メールアドレス」「初期パスワード」の3列からなるCSVファイルをアップロードしてください。
+          </p>
           
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer relative">
             <input 
@@ -148,6 +152,17 @@ export const TenantAdminDashboard: React.FC = () => {
                 value={singleEmail}
                 onChange={(e) => setSingleEmail(e.target.value)}
                 placeholder="例: yamada@example.com"
+                className="w-full border rounded p-2"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1">初期パスワード</label>
+              <input 
+                type="password" 
+                value={singlePassword}
+                onChange={(e) => setSinglePassword(e.target.value)}
+                placeholder="英数字8文字以上など"
                 className="w-full border rounded p-2"
                 required
               />
