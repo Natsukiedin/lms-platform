@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
 import { useCsvParser } from '../../../hooks/useCsvParser';
 
@@ -6,6 +6,9 @@ export const TenantAdminDashboard: React.FC = () => {
   const { user } = useAuth();
   const { parseCsv, isParsing, error, parsedData } = useCsvParser();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [singleName, setSingleName] = useState('');
+  const [singleEmail, setSingleEmail] = useState('');
 
   // モックデータ：本来はAPIから自社のアナリティクスを取得
   const analytics = {
@@ -30,6 +33,16 @@ export const TenantAdminDashboard: React.FC = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  const handleSingleRegister = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!singleName || !singleEmail) return;
+    
+    // APIへデータを送信し登録する処理
+    alert(`${singleName} さんを登録しました！（招待メールは送信されません）`);
+    setSingleName('');
+    setSingleEmail('');
   };
 
   const handleExportCsv = () => {
@@ -105,10 +118,47 @@ export const TenantAdminDashboard: React.FC = () => {
                 disabled={isParsing}
                 className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition-colors"
               >
-                アカウントを一括作成し招待メールを送信する
+                アカウントを一括作成する（招待メールなし）
               </button>
             </div>
           )}
+        </div>
+
+        {/* 単体インポート */}
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h3 className="text-xl font-bold mb-4 border-b pb-2">受講者個別登録</h3>
+          <p className="text-sm text-gray-600 mb-4">1名ずつ手動でアカウントを登録します。（招待メールは送信されません）</p>
+          
+          <form onSubmit={handleSingleRegister} className="space-y-4">
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1">氏名</label>
+              <input 
+                type="text" 
+                value={singleName}
+                onChange={(e) => setSingleName(e.target.value)}
+                placeholder="例: 山田 太郎"
+                className="w-full border rounded p-2"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1">メールアドレス</label>
+              <input 
+                type="email" 
+                value={singleEmail}
+                onChange={(e) => setSingleEmail(e.target.value)}
+                placeholder="例: yamada@example.com"
+                className="w-full border rounded p-2"
+                required
+              />
+            </div>
+            <button 
+              type="submit"
+              className="w-full bg-green-600 text-white font-bold py-2 px-4 rounded hover:bg-green-700 transition-colors mt-4"
+            >
+              アカウントを作成する
+            </button>
+          </form>
         </div>
 
         {/* 期限設定とエクスポート */}
