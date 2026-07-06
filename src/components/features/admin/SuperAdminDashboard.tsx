@@ -1,6 +1,53 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { supabase } from '../../../lib/supabase';
 
 export const SuperAdminDashboard: React.FC = () => {
+  const [tenantName, setTenantName] = useState('');
+  const [adminName, setAdminName] = useState('');
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
+
+  const handleCreateTenant = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!tenantName || !adminName || !adminEmail || !adminPassword) return;
+    setIsCreating(true);
+
+    try {
+      // 1. テナント（企業）を作成
+      const { data: tenant, error: tenantError } = await supabase
+        .from('tenants')
+        .insert([{ name: tenantName, plan: 'Standard' }])
+        .select()
+        .single();
+        
+      if (tenantError) throw tenantError;
+
+      // 2. Edge Function経由で人事管理者（TENANT_ADMIN）を作成
+      const { error: userError } = await supabase.functions.invoke('create-user', {
+        body: {
+          email: adminEmail,
+          password: adminPassword,
+          name: adminName,
+          tenantId: tenant.id,
+          companyName: tenant.name,
+          role: 'TENANT_ADMIN'
+        }
+      });
+      if (userError) throw userError;
+
+      alert(`顧客企業「${tenantName}」と管理者アカウントを作成しました！`);
+      setTenantName('');
+      setAdminName('');
+      setAdminEmail('');
+      setAdminPassword('');
+    } catch (err: any) {
+      console.error(err);
+      alert('作成に失敗しました: ' + err.message);
+    } finally {
+      setIsCreating(false);
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto p-6">
@@ -73,9 +120,30 @@ export const SuperAdminDashboard: React.FC = () => {
             </div>
             
             <div className="space-y-4">
-              <div className="border border-gray-200 rounded p-8 text-center">
-                <p className="text-gray-500 text-sm">現在契約中の顧客企業はありません。</p>
-              </div>
+              <form onSubmit={handleCreateTenant} className="border border-gray-200 rounded p-6 bg-gray-50">
+                <h4 className="font-bold text-gray-700 mb-4 border-b pb-2">新規テナント登録フォーム</h4>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-600 mb-1">企業名</label>
+                    <input type="text" value={tenantName} onChange={e => setTenantName(e.target.value)} required className="w-full border rounded p-2 text-sm" placeholder="株式会社〇〇" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-600 mb-1">人事管理者 氏名</label>
+                    <input type="text" value={adminName} onChange={e => setAdminName(e.target.value)} required className="w-full border rounded p-2 text-sm" placeholder="担当者名" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-600 mb-1">人事管理者 メールアドレス</label>
+                    <input type="email" value={adminEmail} onChange={e => setAdminEmail(e.target.value)} required className="w-full border rounded p-2 text-sm" placeholder="admin@example.com" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-600 mb-1">初期パスワード</label>
+                    <input type="password" value={adminPassword} onChange={e => setAdminPassword(e.target.value)} required className="w-full border rounded p-2 text-sm" placeholder="8文字以上" />
+                  </div>
+                  <button type="submit" disabled={isCreating} className="w-full bg-green-600 text-white font-bold py-2 px-4 rounded hover:bg-green-700 mt-2 text-sm disabled:opacity-50">
+                    {isCreating ? '作成中...' : '企業と管理者を作成する'}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>

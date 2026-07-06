@@ -31,7 +31,19 @@ serve(async (req) => {
     }
 
     // リクエストボディから新しいユーザーの情報を取得
-    const { email, password, name, tenantId, companyName } = await req.json()
+    const { email, password, name, tenantId, companyName, role } = await req.json()
+
+    let assignedRole = 'USER'
+    
+    // TENANT_ADMINを作成しようとしている場合、呼び出し元がSUPER_ADMINかチェックする
+    if (role === 'TENANT_ADMIN') {
+      const { data: adminData } = await supabaseAdmin.from('users').select('role').eq('id', callingUser.id).single()
+      if (adminData?.role === 'SUPER_ADMIN') {
+        assignedRole = 'TENANT_ADMIN'
+      } else {
+        throw new Error('Unauthorized to create TENANT_ADMIN')
+      }
+    }
 
     // admin APIを使用して、メール確認なしでユーザーを直接作成
     const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
@@ -42,7 +54,7 @@ serve(async (req) => {
         name: name,
         tenant_id: tenantId,
         company_name: companyName,
-        role: 'USER' // 登録された受講者は常に一般ユーザー権限
+        role: assignedRole
       }
     })
 
