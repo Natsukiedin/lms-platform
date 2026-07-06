@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
 import { useCsvParser } from '../../../hooks/useCsvParser';
+import { supabase } from '../../../lib/supabase';
 
 export const TenantAdminDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -28,23 +29,58 @@ export const TenantAdminDashboard: React.FC = () => {
 
   const handleCreateUsers = async () => {
     if (!parsedData) return;
-    // モック: ユーザー作成APIの呼び出し
-    // APIへデータを送信し登録する処理
-    alert(`${parsedData.length}名のアカウントを登録し、招待メールを送信しました！`);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+    
+    try {
+      // CSVの各ユーザーに対してAPIを呼び出す
+      for (const u of parsedData) {
+        if (!u.password) throw new Error('パスワードが設定されていないユーザーがいます');
+        
+        const { error } = await supabase.functions.invoke('create-user', {
+          body: {
+            email: u.email,
+            password: u.password,
+            name: u.name,
+            tenantId: user?.tenantId,
+            companyName: user?.companyName
+          }
+        });
+        if (error) throw error;
+      }
+      
+      alert(`${parsedData.length}名のアカウントを登録しました！`);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert('一部のユーザー登録に失敗しました: ' + err.message);
     }
   };
 
-  const handleSingleRegister = (e: React.FormEvent) => {
+  const handleSingleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!singleName || !singleEmail || !singlePassword) return;
     
-    // APIへデータを送信し登録する処理
-    alert(`${singleName} さんを登録しました！（初期パスワード: ${singlePassword}）`);
-    setSingleName('');
-    setSingleEmail('');
-    setSinglePassword('');
+    try {
+      const { error } = await supabase.functions.invoke('create-user', {
+        body: {
+          email: singleEmail,
+          password: singlePassword,
+          name: singleName,
+          tenantId: user?.tenantId,
+          companyName: user?.companyName
+        }
+      });
+      if (error) throw error;
+      
+      alert(`${singleName} さんを登録しました！（初期パスワード: ${singlePassword}）`);
+      setSingleName('');
+      setSingleEmail('');
+      setSinglePassword('');
+    } catch (err: any) {
+      console.error(err);
+      alert('登録に失敗しました: ' + err.message);
+    }
   };
 
   const handleExportCsv = () => {
